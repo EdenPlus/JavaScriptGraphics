@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pixel Flurry</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://static.codehs.com/gulp/b33dc8b03f0ee30ab3f5b2862a1858ec8158f993/chs-js-lib/chs.js"></script>
+
+
+<style>
+canvas {
+    border: 1px solid black;
+    display: inline-block;
+    vertical-align: top;
+}
+
+pre {
+    border: 1px solid black;
+    display: inline-block;
+    width: 400px;
+    height: 500px;
+    background-color: #F5F5F5;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Pixel Flurry</h1>
+
+
+
+<canvas
+width="400"
+height="500"
+class="codehs-editor-canvas"></canvas>
+<pre id="console"></pre>
+
+<script>
+window.onload = function() {
+
+    var scale = 10;
+var map = [];
+var arr_length = getWidth() / scale;
+for(var i = 0; i < arr_length; ++i)
+{
+    map[i] = [];
+}
+
+for(var c = scale; c <= getWidth(); c += scale)
+{
+    for(var d = scale; d <= getHeight(); d += scale)
+    {
+        map[c/scale - 1][d/scale - 1] = new Rectangle(scale, scale);
+        map[c/scale - 1][d/scale - 1].setPosition(c - scale, d - scale);
+        map[c/scale - 1][d/scale - 1].setColor(Randomizer.nextColor());
+    }
+}
+
+for(var e = 0; e < map.length; e++)
+{
+    for(var f = 0; f < map[e].length; f++)
+    {
+        add(map[e][f]);
+    }
+}
+
+for(var a = 0; a <= getWidth(); a += scale)
+{
+    var temp = new Line(a, 0, a, getHeight());
+    add(temp);
+}
+
+for(var b = 0; b <= getHeight(); b += scale)
+{
+    var temp = new Line(0, b, getWidth(), b);
+    add(temp);
+}
+
+function start()
+{
+    setTimer(cycleColors, 100);
+}
+
+function cycleColors()
+{
+    for(var e = 0; e < map.length; e++)
+    {
+        for(var f = 0; f < map[e].length; f++)
+        {
+            map[e][f].setColor(Randomizer.nextColor());
+        }
+    }
+}
+
+
+    if (typeof start === 'function') {
+        start();
+    }
+};
+</script>
+
+</body>
+</html>
