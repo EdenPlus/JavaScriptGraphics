@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Patterns</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://static.codehs.com/gulp/b33dc8b03f0ee30ab3f5b2862a1858ec8158f993/chs-js-lib/chs.js"></script>
+
+
+<style>
+canvas {
+    border: 1px solid black;
+    display: inline-block;
+    vertical-align: top;
+}
+
+pre {
+    border: 1px solid black;
+    display: inline-block;
+    width: 400px;
+    height: 500px;
+    background-color: #F5F5F5;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Patterns</h1>
+
+
+
+<canvas
+width="400"
+height="500"
+class="codehs-editor-canvas"></canvas>
+<pre id="console"></pre>
+
+<script>
+window.onload = function() {
+
+    function start()
+{
+    switch (readInt("Pattern number? (1-1)"))
+    {
+        case 1:
+            adjacentOctagons();
+        default:
+            println("That isn't an available pattern.");
+    }
+}
+
+function adjacentOctagons()
+{
+    var num = readInt("Scale? (20 has best results) ");
+    if(readBoolean("Vertical lines? (true/false) "))
+    {
+        octagonV(num);
+    }
+    if(readBoolean("Horizontal lines? (true/false) "))
+    {
+        octagonH(num);
+    }
+    if(readBoolean("Top right diagonal lines? (true/false) "))
+    {
+        octagonTRD(num);
+    }
+    if(readBoolean("Top left diagonal lines? (true/false) "))
+    {
+        octagonTLD(num);
+    }
+    if(readBoolean("Bottom right diagonal lines? (true/false) "))
+    {
+        octagonBRD(num);
+    }
+    if(readBoolean("Bottom left diagonal lines? (true/false) "))
+    {
+        octagonBLD(num);
+    }
+}
+
+function octagonV(scale)
+{
+    // Vertical
+    for(var a = 0; a <= getWidth(); a += scale*3)
+    {
+        for(var b = 0; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a, b - scale);
+            add(temp);
+        }
+    }
+}
+
+function octagonH(scale)
+{
+    // Horizontal
+    for(var a = scale; a <= getWidth(); a += scale*3)
+    {
+        for(var b = scale; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a + scale, b);
+            add(temp);
+        }
+    }
+}
+
+function octagonTRD(scale)
+{
+    // Top Right Diagonal
+    for(var a = scale*2; a <= getWidth(); a += scale*3)
+    {
+        for(var b = scale; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a + scale, b + scale);
+            add(temp);
+        }
+    }
+}
+
+function octagonTLD(scale)
+{
+    // Top Left Diagonal
+    for(var a = scale; a <= getWidth(); a += scale*3)
+    {
+        for(var b = scale; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a - scale, b + scale);
+            add(temp);
+        }
+    }
+}
+
+function octagonBRD(scale)
+{
+    // Bottom Right Diagonal
+    for(var a = scale*2; a <= getWidth(); a += scale*3)
+    {
+        for(var b = scale; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a + scale, b - scale);
+            add(temp);
+        }
+    }
+}
+
+function octagonBLD(scale)
+{
+    // Bottom Left Diagonal
+    for(var a = 0; a <= getWidth(); a += scale*3)
+    {
+        for(var b = 0; b <= getHeight(); b += scale*3)
+        {
+            var temp = new Line(a, b, a + scale, b + scale);
+            add(temp);
+        }
+    }
+}
+
+
+    if (typeof start === 'function') {
+        start();
+    }
+};
+</script>
+
+</body>
+</html>
