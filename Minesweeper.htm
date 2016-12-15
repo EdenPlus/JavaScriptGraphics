@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Minesweeper</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://static.codehs.com/gulp/b33dc8b03f0ee30ab3f5b2862a1858ec8158f993/chs-js-lib/chs.js"></script>
+
+
+<style>
+canvas {
+    border: 1px solid black;
+    display: inline-block;
+    vertical-align: top;
+}
+
+pre {
+    border: 1px solid black;
+    display: inline-block;
+    width: 400px;
+    height: 500px;
+    background-color: #F5F5F5;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Minesweeper</h1>
+
+
+
+<canvas
+width="400"
+height="500"
+class="codehs-editor-canvas"></canvas>
+<pre id="console"></pre>
+
+<script>
+window.onload = function() {
+
+    var pointEdge = 2;
+var score;
+var scale = 19;
+var cover = [];
+var under = [];
+var shown = [];
+
+function start()
+{
+    initialize();
+    mouseClickMethod(sweep);
+}
+
+function sweep(e)
+{
+    var curX = (e.getX() - e.getX()%scale)/scale;
+    var curY = (e.getY() - e.getY()%scale)/scale;
+    if(!(shown[curX][curY]))
+    {
+        add(under[curX][curY]);
+        shown[curX][curY] = true;
+    }
+    if(under[curX][curY].getText() == "M")
+    {
+        println("Game over.");
+        println("You earned " + score + " points.");
+        initialize();
+    }
+    else
+    {
+        score += parseInt(under[curX][curY].getText(), 10);
+    }
+}
+
+function initialize()
+{
+    var input1 = readInt("Board scale? ");
+    var input2 = readInt("Number of mines on the field. ");
+    scale = 19;
+    if(input1 > scale)
+    {
+        scale = input1;
+    }
+    else
+    {
+        println("Scale was too small, defaulting to " + scale);
+    }
+    var mineCount = 5;
+    if(input2 > mineCount)
+    {
+        mineCount = input2;
+    }
+    else
+    {
+        println("Not enough mines, defaulting to " + mineCount);
+    }
+    score = 0;
+    var boardWidth = getWidth() - getWidth()%scale;
+    var arr_length = boardWidth / scale;
+    for(var a = 0; a < arr_length; a++)
+    {
+        cover[a] = [];
+        under[a] = [];
+        shown[a] = [];
+    }
+    
+    for(var a = 0; a < boardWidth; a += scale)
+    {
+        for(var b = 0; b < boardWidth; b += scale)
+        {
+            cover[((a)/scale)][((b)/scale)] = new Rectangle(scale, scale);
+            cover[((a)/scale)][((b)/scale)].setPosition(a, b);
+            cover[((a)/scale)][((b)/scale)].setColor(Color.GREY);
+            under[((a)/scale)][((b)/scale)] = new Text("0", scale + "pt Arial");
+            under[((a)/scale)][((b)/scale)].setPosition(a, b + scale);
+            shown[((a)/scale)][((b)/scale)] = false;
+        }
+    }
+    
+    for(var a = 0; a < mineCount; a++)
+    {
+        fixer: while(true)
+        {
+            var curX = Randomizer.nextInt(getWidth()/scale);
+            var curY = Randomizer.nextInt(getWidth()/scale);
+            if(under[curX][curY].getColor() != Color.RED)
+            {
+                under[curX][curY] = new Text("M", scale + "pt Arial");
+                under[curX][curY].setPosition(curX * scale, curY * scale + scale);
+                under[curX][curY].setColor(Color.RED);
+                for(var b = curX; b <= curX + pointEdge; b++)
+                {
+                    for(var c = curY - pointEdge; c <= curY + pointEdge; c++)
+                    {
+                        if(b < boardWidth/scale)
+                        {
+                            if(c < boardWidth/scale)
+                            {
+                                if(c >= 0)
+                                {
+                                    if(under[b][c].getColor() != Color.RED && under[b][c].getColor() != Color.BLUE)
+                                    {
+                                        under[b][c] = new Text(Randomizer.nextInt(1,3).toString(), scale + "pt Arial");
+                                        under[b][c].setPosition(b * scale, c * scale + scale);
+                                        under[b][c].setColor(Color.BLUE);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                for(var b = curX - pointEdge; b <= curX; b++)
+                {
+                    for(var c = curY - pointEdge; c <= curY + pointEdge; c++)
+                    {
+                        if(b >= 0)
+                        {
+                            if(c >= 0)
+                            {
+                                if(c < boardWidth/scale)
+                                {
+                                    if(under[b][c].getColor() != Color.RED && under[b][c].getColor() != Color.BLUE)
+                                    {
+                                        under[b][c] = new Text(Randomizer.nextInt(1,2).toString(), scale + "pt Arial");
+                                        under[b][c].setPosition(b * scale, c * scale + scale);
+                                        under[b][c].setColor(Color.BLUE);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break fixer;
+            }
+        }
+    }
+    
+    for(var a = 0; a < cover.length; a++)
+    {
+        for(var b = 0; b < cover[a].length; b++)
+        {
+            add(cover[a][b]);
+        }
+    }
+    
+    for(var a = 0; a <= boardWidth; a += scale)
+    {
+        var temp = new Line(a, 0, a, boardWidth);
+        add(temp);
+    }
+    
+    for(var b = 0; b <= getWidth(); b += scale)
+    {
+        var temp = new Line(0, b, boardWidth, b);
+        add(temp);
+    }
+    
+    for(var a = 0; a < boardWidth/scale; a++)
+    {
+        for(var b = 0; b < boardWidth/scale; b++)
+        {
+            var temp = parseInt(under[a][b].getText());
+            if(temp < 1)
+            {
+                add(under[a][b]);
+            }
+        }
+    }
+}
+
+
+    if (typeof start === 'function') {
+        start();
+    }
+};
+</script>
+
+</body>
+</html>
